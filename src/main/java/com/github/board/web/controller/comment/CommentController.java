@@ -7,6 +7,7 @@ import com.github.board.service.exception.InvalidValueException;
 import com.github.board.web.dto.comment.Comment;
 import com.github.board.web.dto.comment.CommentRequest;
 import com.github.board.web.dto.comment.CommentResponse;
+import com.github.board.web.dto.comment.CommentDefaultResponse;
 import com.github.board.web.dto.comment.CommentListResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -93,5 +94,36 @@ public class CommentController {
     }
 
 
+    /**
+     * 댓글 수정
+     * Put /api/comment/edit/{id}
+     * 필요 파라미터 : CommentRequest("content": "수정된 댓글 내용"),@PathVariable  String id
+     * 로그인확인 처리
+     * 리턴타입 : ResponseEntity<CommentDefaultResponse>
+     * */
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<CommentDefaultResponse> updateComment(@PathVariable String id,
+                                                                @AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                @RequestBody CommentRequest commentRequest){
+
+        if(userDetails == null) throw new CAuthenticationEntryPointException("로그인 후 댓글을 수정할 수 있습니다.");
+        Integer userIdx = userDetails.getUserId();
+        commentRequest.setUserId(userIdx);
+
+        commentService.updateComment(id, commentRequest);
+
+
+        String responseMessage = id + "번 댓글이 성공적으로 수정되었습니다.";
+
+        // ResponseEntity
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        CommentDefaultResponse commentResponse = new CommentDefaultResponse();
+        commentResponse.setMessage(responseMessage);
+        commentResponse.setStatus(HttpStatus.OK.value());
+
+        return new ResponseEntity<CommentDefaultResponse> (commentResponse, headers, HttpStatus.OK);
+    }
 
 }

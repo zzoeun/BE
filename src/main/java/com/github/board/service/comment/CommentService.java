@@ -10,7 +10,9 @@ import com.github.board.web.dto.comment.Comment;
 import com.github.board.web.dto.comment.CommentRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -79,6 +81,16 @@ public class CommentService {
         return savecCmment;
     }
 
+    //댓글 수정
+    @Transactional(transactionManager = "tmJpaComment")
+    public void updateComment(String id, CommentRequest commentRequest) {
+        Integer idx = Integer.valueOf(id);
+        Comments comment = commentJpaRepository.findByIdJoinUser(idx).orElseThrow(
+                () -> new NotFoundException("해당 댓글을 찾을 수 없습니다."));
+
+        if(!comment.getUser().getUserId().equals(commentRequest.getUserId())) throw new AccessDeniedException("작성자 불일치 : 댓글 수정 권한이 없습니다.");
+        comment.setBody(commentRequest.getContent());
+    }
 
 
 
