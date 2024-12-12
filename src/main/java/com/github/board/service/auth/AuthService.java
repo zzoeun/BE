@@ -1,14 +1,14 @@
 package com.github.board.service.auth;
 
-import com.github.movieproject.config.securtiy.JwtTokenProvider;
-import com.github.movieproject.repository.auth.role.RoleRepository;
-import com.github.movieproject.repository.auth.user.UserRepository;
-import com.github.movieproject.repository.auth.user.Users;
-import com.github.movieproject.service.exception.NotAcceptException;
-import com.github.movieproject.service.exception.NotFoundException;
-import com.github.movieproject.web.advice.ErrorCode;
-import com.github.movieproject.web.dto.auth.LoginRequest;
-import com.github.movieproject.web.dto.auth.SignUpRequest;
+import com.github.board.config.securtiy.JwtTokenProvider;
+import com.github.board.repository.auth.role.RoleRepository;
+import com.github.board.repository.auth.user.UserRepository;
+import com.github.board.repository.auth.user.Users;
+import com.github.board.service.exception.NotAcceptException;
+import com.github.board.service.exception.NotFoundException;
+import com.github.board.web.advice.ErrorCode;
+import com.github.board.web.dto.auth.LoginRequest;
+import com.github.board.web.dto.auth.SignUpRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;

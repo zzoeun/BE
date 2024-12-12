@@ -12,7 +12,7 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   application:
-    name: movieProject
+    name: board
   datasource:
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}

@@ -1,10 +1,10 @@
 package com.github.board.web.controller.auth;
 
-import com.github.movieproject.config.securtiy.JwtTokenProvider;
-import com.github.movieproject.service.auth.AuthService;
-import com.github.movieproject.service.auth.JwtBlacklistService;
-import com.github.movieproject.web.dto.auth.LoginRequest;
-import com.github.movieproject.web.dto.auth.SignUpRequest;
+import com.github.board.config.securtiy.JwtTokenProvider;
+import com.github.board.service.auth.AuthService;
+import com.github.board.service.auth.JwtBlacklistService;
+import com.github.board.web.dto.auth.LoginRequest;
+import com.github.board.web.dto.auth.SignUpRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

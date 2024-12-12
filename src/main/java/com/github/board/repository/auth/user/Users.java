@@ -1,6 +1,6 @@
 package com.github.board.repository.auth.user;
 
-import com.github.movieproject.repository.auth.role.Roles;
+import com.github.board.repository.auth.role.Roles;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
