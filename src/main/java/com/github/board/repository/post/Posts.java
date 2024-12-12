@@ -1,7 +1,7 @@
 package com.github.board.repository.post;
 
 
-import com.github.movieproject.repository.auth.user.Users;
+import com.github.board.repository.auth.user.Users;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
