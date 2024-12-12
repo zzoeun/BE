@@ -1,19 +1,23 @@
 package com.github.board.web.controller.comment;
 
+import com.github.board.repository.auth.userDetails.CustomUserDetails;
 import com.github.board.service.comment.CommentService;
+import com.github.board.service.exception.CAuthenticationEntryPointException;
 import com.github.board.service.exception.InvalidValueException;
 import com.github.board.web.dto.comment.Comment;
+import com.github.board.web.dto.comment.CommentRequest;
+import com.github.board.web.dto.comment.CommentResponse;
 import com.github.board.web.dto.comment.CommentListResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -56,5 +60,38 @@ public class CommentController {
         return new ResponseEntity<CommentListResponse> (commentListResponse, headers, HttpStatus.OK);
 
     }
+
+    /**
+     * 댓글 작성
+     * Post /api/comment/write
+     * 필요 파라미터 : CommentRequest("content": "추가하는 내용","post_id": 게시글 idx)
+     * 로그인확인 처리
+     * 리턴타입 : ResponseEntity<CommentListResponse>
+     * */
+    @PostMapping("/write")
+    public ResponseEntity<CommentResponse> registerComment(@RequestBody CommentRequest commentRequest,
+                                                           @AuthenticationPrincipal CustomUserDetails userDetails,
+                                                           HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
+
+        if(userDetails == null) throw new CAuthenticationEntryPointException("로그인 후 댓글을 작성할 수 있습니다.");
+        Integer userIdx = userDetails.getUserId();
+        commentRequest.setUserId(userIdx);
+        Comment comment = commentService.registerComment(commentRequest);
+
+
+        String responseMessage = "댓글이 성공적으로 작성되었습니다.";
+        // ResponseEntity
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        CommentResponse commentResponse = new CommentResponse();
+        commentResponse.setMessage(responseMessage);
+        commentResponse.setStatus(HttpStatus.OK.value());
+        commentResponse.setComment(comment);
+
+        return new ResponseEntity<CommentResponse> (commentResponse, headers, HttpStatus.OK);
+    }
+
+
 
 }

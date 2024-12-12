@@ -1,10 +1,13 @@
 package com.github.board.service.comment;
 
+import com.github.board.repository.auth.user.Users;
 import com.github.board.repository.comment.CommentJpaRepository;
 import com.github.board.repository.comment.Comments;
 import com.github.board.repository.post.Posts;
 import com.github.board.service.exception.NotFoundException;
 import com.github.board.web.dto.comment.Comment;
+import com.github.board.web.dto.comment.Comment;
+import com.github.board.web.dto.comment.CommentRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -50,4 +53,33 @@ public class CommentService {
         ).collect(Collectors.toList());
         return responseData;
     }
+
+    //댓글 등록
+    public Comment registerComment(CommentRequest commentRequest) {
+        Comments newComment = Comments.builder()
+                .body(commentRequest.getContent())
+                .postsIdx(  commentRequest.getPostId() )
+                .user( Users.builder().userId(commentRequest.getUserId()).build() )
+                .build();
+
+        commentJpaRepository.save(newComment);
+
+        Comments comments = commentJpaRepository.findByIdJoinUser(newComment.getIdx()).orElseThrow(
+                () -> new NotFoundException("해당 댓글을 찾을 수 없습니다."));
+
+
+        Comment savecCmment = Comment.builder()
+                .id(comments.getIdx())
+                .postId(comments.getPostsIdx())
+                .author(comments.getUser().getUserName())
+                .content(comments.getBody())
+                .createdAt( localDateTimeToString(comments.getCreatedAt()) )
+                //   .authorIdx(comments.getUser().getUserId())
+                .build();
+        return savecCmment;
+    }
+
+
+
+
 }
