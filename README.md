@@ -253,45 +253,46 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 
 ## 4. 개발 일정(WBS)
 
-![[Pasted image 20241212000236.png]]
+![Example Image](src/main/resources/images/image4.png)
 
 요구 사항 분석      :     2024-12-09, 5d
-    게시글API 개발 - 박조은    :    2024-12-09, 5d
-    댓글API 개발 - 김현지        :    2024-12-09, 5d
-    좋아요API 개발 - 우비주    :    2024-12-09, 5d
-    회원API 개발 - 김도현        :    2024-12-09, 5d
+게시글API 개발 - 박조은    :    2024-12-09, 5d
+댓글API 개발 - 김현지        :    2024-12-09, 5d
+좋아요API 개발 - 우비주    :    2024-12-09, 5d
+회원API 개발 - 김도현        :    2024-12-09, 5d
 
 테스트         :     2024-12-13, 1d
 문서 작성    :     2024-12-11, 1d
 
+
 ## 5. 화면 설계( U.I )
 
-|                로그인 폼                 |
-| :----------------------------------: |
-| ![[Pasted image 20241212003624.png]] |
-|             게시글 전체 목록 폼              |
-| ![[Pasted image 20241212003801.png]] |
-|               게시글 작성 폼               |
-| ![[Pasted image 20241212003840.png]] |
-|             게시글 상세 내용 폼              |
-| ![[Pasted image 20241212003914.png]] |
-|               댓글 작성 폼                |
-| ![[Pasted image 20241212003945.png]] |
-|               댓글 내용 폼                |
-| ![[Pasted image 20241212004009.png]] |
+|                           로그인 폼                           |
+|:---------------------------------------------------------:|
+|  ![Example Image](src/main/resources/images/image5.png)   |
+|                        게시글 전체 목록 폼                        |
+|  ![Example Image](src/main/resources/images/image6.png)   |
+|                         게시글 작성 폼                          |
+|  ![Example Image](src/main/resources/images/image7.png)   |
+|                        게시글 상세 내용 폼                        |
+|  ![Example Image](src/main/resources/images/image8.png)   |
+|                          댓글 작성 폼                          |
+|  ![Example Image](src/main/resources/images/image9.png)   |
+|                          댓글 내용 폼                          |
+| ![Example Image](src/main/resources/images/image_10.png)] |
 
 사진 자료가 없네?
 
 ## 6. 데이터베이스 모델링( ERD )
 
-![[f475615f-6662-4369-925d-d4afdf82ed46.jpg]]
+![Example Image](src/main/resources/images/image1.jpg)
 
 ## 7. 메인 기능
-![[Pasted image 20241211235922.png]]
+![Example Image](src/main/resources/images/image3.png)
 
 - 여기에 각자 구현한 기능을 작성
 
-![[Pasted image 20241211232401.png]]
+![Example Image](src/main/resources/images/image2.png)
 
 로그인 시 클라이언트가 로그인 요청을 하고, 웹 서버가 로그인 정보를 요구한 후, 서버가 해당 정보를 검증하여 성공 또는 실패 결과를 클라이언트에게 전달하는 과정
 
@@ -299,15 +300,15 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 
 ## 박 조 은
 #### 에러 및 에러 해결
-- 
+- 여기에 작성하면 됩니다.
 
 ## 김 현 지
 #### 에러 및 에러 해결
-- 
+- 여기에 작성하면 됩니다.
 
 ## 우 비 주
 #### 에러 및 에러 해결
-- 
+- 여기에 작성하면 됩니다.
 
 ## 김 도 현
 #### 에러 및 에러 해결
@@ -325,11 +326,11 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
                 )
 ```
 
-  -> WebConfiguration을 설정하는 클래스의 fliterChain메서드에서 아래의 코드를 작성하여 접근 제한을 했기 때문에 팀원들이 기능을 구현한 뒤에 작성한 URL에 맞춰서 재설정
+-> WebConfiguration을 설정하는 클래스의 fliterChain메서드에서 아래의 코드를 작성하여 접근 제한을 했기 때문에 팀원들이 기능을 구현한 뒤에 작성한 URL에 맞춰서 재설정
 
 - 원인 : DataSource를 생성할 때 driverClassName이 비어 있다는 것을 의미
 
- -> @ConfigurationProperties(prefix = "spring.datasource")와 @EnableConfigurationProperties(DataSourceProperties.class)
+-> @ConfigurationProperties(prefix = "spring.datasource")와 @EnableConfigurationProperties(DataSourceProperties.class)
 작성이 되어 서로 합이 되는 어노테이션이기에 확인이 필요하고 prefix작성시 yaml의경로를 확인하여 작성이 필요하다.
 
 - Spring Boot의 기본 설정에서 해당 프로퍼티를 인식하지 못하는 것을 의미
@@ -346,7 +347,7 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 )
 ```
 
-  -> copy reference를 통해 basePackage의 파일 경로를 확인하고 @Repository가 설정된 파일을 점검, Active Profies를 확인하여 yaml파일 경로를 확인하는 것도 중요하다.
+-> copy reference를 통해 basePackage의 파일 경로를 확인하고 @Repository가 설정된 파일을 점검, Active Profies를 확인하여 yaml파일 경로를 확인하는 것도 중요하다.
 
 
 - JwtProvider의 resolveToken메서드를 반환하는 값이 X-AUTH-TOKEN으로 하고 있었는데 토큰이 일치하지 않아서 동작하지 않았다?
@@ -362,8 +363,8 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
     }
 ```
 
-  ->Bearer Token으로 교체 작업을 진행함.
-  
+->Bearer Token으로 교체 작업을 진행함.
+
 - createToken에서 username은 있는데 email 값이 들어오진 않았다.
 ```java
         Claims claims = Jwts.claims()
@@ -383,7 +384,7 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 }
 ```
 
-  -> setSubject는 주체를 정하는 것은 한번만 적용이 되고 마지막에 작성한 것을 기준으로 주체를 삼는다. 그래서 아래 코드와 같이 변경했다.
+-> setSubject는 주체를 정하는 것은 한번만 적용이 되고 마지막에 작성한 것을 기준으로 주체를 삼는다. 그래서 아래 코드와 같이 변경했다.
 ```java
         Claims claims = Jwts.claims()
                 .setSubject(email);
@@ -396,25 +397,23 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 ## 9. 개발하며 느낀점
 ## 박 조 은
 #### 개발하며 느낀점
-- 
+- 여기에 작성하면 됩니다.
 
 ## 김 현 지
 #### 개발하며 느낀점
-- 
+- 여기에 작성하면 됩니다.
 
 ## 우 비 주
 #### 개발하며 느낀점
-- 
+- 여기에 작성하면 됩니다.
 
 ## 김 도 현
 #### 개발하며 느낀점
 -  OneToOne과 ManyToOne에서 지정하는 데이터 타입 설정을 몰랐음, repository에서 @Query에서 SQL문 작성 시 Join문에서 동작이 안되었음, OneToOne과 ManyToOne을 사용할 때 작성이 필요한 코드를 몰랐음
-  ->테이블 간 관계도와 join구문에 대한 이해가 부족하다. 추가적인 학습이 필요하다.
+   ->테이블 간 관계도와 join구문에 대한 이해가 부족하다. 추가적인 학습이 필요하다.
 
 - Spring Security에서 변경이 가능한 UserDetailsService의 loadByUsername메서드 작성 시 authorities()의 데이터를 처리할 때 문제가 발생하고 해결하는데 까지 상당히 시간이 많이 소요됨
- -> 스트림과 람다식에 대한 이해가 부족하다. 추가적인 학습이 필요하다.
+  -> 스트림과 람다식에 대한 이해가 부족하다. 추가적인 학습이 필요하다.
 
 - JwtToken 구현 후 구조가 비슷한 RefreshToken하는 코드를 작성하지 못함, Argument Resolver가 들어가야하는 위치를 찾지 못하고 있음
- -> JWT Token,RefreshToken,Argument Resolver에 대한 이해 및 사용 이유를 제대로 이해하지 못했다. 추가적인 학습이 필요하다.
- 
- 
+  -> JWT Token,RefreshToken,Argument Resolver에 대한 이해 및 사용 이유를 제대로 이해하지 못했다. 추가적인 학습이 필요하다.
