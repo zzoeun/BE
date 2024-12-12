@@ -126,4 +126,34 @@ public class CommentController {
         return new ResponseEntity<CommentDefaultResponse> (commentResponse, headers, HttpStatus.OK);
     }
 
+    /**
+     * 댓글 삭제
+     * Delete /api/comment/delete/{id}
+     * 필요 파라미터 : @PathVariable String id
+     * 로그인확인 처리
+     * 리턴타입 : ResponseEntity<CommentDefaultResponse>
+     * */
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<CommentDefaultResponse> deleteComment(@PathVariable String id, @AuthenticationPrincipal CustomUserDetails userDetails){
+        if(userDetails == null) throw new CAuthenticationEntryPointException("로그인 후 댓글을 삭제할 수 있습니다.");
+        Integer userIdx = userDetails.getUserId();
+
+        commentService.deleteComment(id, userIdx);
+
+        String responseMessage = id + "번 댓글이 성공적으로 삭제되었습니다.";
+
+        // ResponseEntity
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        CommentDefaultResponse commentResponse = new CommentDefaultResponse();
+        commentResponse.setMessage(responseMessage);
+        commentResponse.setStatus(HttpStatus.OK.value());
+
+        return new ResponseEntity<CommentDefaultResponse> (commentResponse, headers, HttpStatus.OK);
+    }
+
+
+
+
 }

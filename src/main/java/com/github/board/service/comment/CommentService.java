@@ -93,5 +93,16 @@ public class CommentService {
     }
 
 
+    //댓글 삭제
+    public void deleteComment(String id, Integer userIdx) {
+        Integer idx = Integer.valueOf(id);
+        Comments comment = commentJpaRepository.findByIdJoinUser(idx).orElseThrow(
+                () -> new NotFoundException("해당 댓글을 찾을 수 없습니다."));
+
+        if(!comment.getUser().getUserId().equals(userIdx)) throw new AccessDeniedException("작성자 불일치 : 댓글 삭제 권한이 없습니다.");
+
+        commentJpaRepository.delete(comment);
+    }
+
 
 }
