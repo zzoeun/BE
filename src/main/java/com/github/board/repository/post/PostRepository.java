@@ -1,4 +1,4 @@
-package com.github.movieproject.repository.post;
+package com.github.board.repository.post;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
