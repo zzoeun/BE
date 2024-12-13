@@ -47,11 +47,11 @@
 - 댓글 API
 
 | App     | URL             | HTTP Method | Note     | 로그인 권한 필요 |
-| ------- | --------------- | ----------- | -------- | :-------: |
-| Comment | /comment/all    | GET         | 게시글 댓글목록 |           |
+| ------- | --------------- | ----------- |----------| :-------: |
+| Comment | /comment/post-comments   | GET         | 게시글 댓글목록 |           |
 | Comment | /comment/write  | POST        | 댓글 작성    |     ✅     |
-| Comment | /comment/edit   | UPDATE      | 댓글 업데이터  |     ✅     |
-| Comment | /comment/delete | DELETE      | 댓글 삭제    |     ✅     |
+| Comment | /comment/edit/id   | UPDATE      | 댓글 수정    |     ✅     |
+| Comment | /comment/delete/id | DELETE      | 댓글 삭제    |     ✅     |
 
 - 좋아요 API
 
@@ -168,10 +168,11 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 ```
 ​
 
-#### 댓글을 조회하는 API
+#### 게시글 댓글을 조회하는 API
 
 - HTTP 메소드: GET
-- 엔드포인트: /api/comments
+- 엔드포인트: /api/comment/post-comments
+- 쿼리 파라미터: ?idx=1
 
 응답 본문(JSON 형식):
 
@@ -189,18 +190,28 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 #### 댓글을 새롭게 만들 수 있는 API
 
 - HTTP 메소드: POST
-- 엔드포인트: /api/comments
-
+- 엔드포인트: /api/comments/write
+- 로그인 필요
 요청 본문(JSON 형식):
 
 ```JSON
-{ "content": "댓글 내용", "author": "작성자", "post_id": 1 }
+{ "content": "댓글 내용",  "post_id": 1 }
 ```
 
 응답 본문(JSON 형식):
 
 ```JSON
-{ "message": "댓글이 성공적으로 작성되었습니다." }
+{
+  "message": "댓글이 성공적으로 작성되었습니다.",
+  "status": 200,
+  "comment": {
+    "id": "댓글id",
+    "content": "댓글 내용",
+    "author": "작성자",
+    "postId": "게시글 id",
+    "createdAt": "작성일자"
+  }
+}
 ```
 
 
@@ -208,6 +219,7 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 
 - HTTP 메소드: POST
 - 엔드포인트: /api/posts
+- 로그인필요(Bearer Token)
 
 요청 본문(JSON 형식):
 
@@ -225,7 +237,8 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 #### 기존 댓글의 글을 수정하는 API
 
 - HTTP 메소드: PUT
-- 엔드포인트: /api/comments/:comment_id
+- 엔드포인트: /api/comment/edit/:comment_id
+- 로그인필요(Bearer Token)
 
 요청 본문(JSON 형식):
 
@@ -236,7 +249,10 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 응답 본문(JSON 형식):
 
 ```JSON
-{ "message": "댓글이 성공적으로 수정되었습니다." }
+{
+  "message": "21번 댓글이 성공적으로 수정되었습니다.",
+  "status": 200
+}
 ```
 
 
@@ -250,6 +266,22 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 { "title": "수정된 게시물 제목", "content": "수정 }
 ```
 
+
+#### 기존 댓글을 삭제하는 API
+
+- HTTP 메소드: DELETE
+- 엔드포인트: /api/comment/delete/:comment_id
+- 로그인필요(Bearer Token)
+
+
+응답 본문(JSON 형식):
+
+```JSON
+{
+  "message": "21번 댓글이 성공적으로 삭제되었습니다.",
+  "status": 200
+}
+```
 
 ## 4. 개발 일정(WBS)
 
@@ -304,7 +336,25 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 
 ## 김 현 지
 #### 에러 및 에러 해결
-- 여기에 작성하면 됩니다.
+- 댓글을 생성하는 과정에서 생성일에 값을 넣어주지 않고 insert 했더니 에러가 났다.
+  DB table 에 생성일 부분을 not null 로 설정해두고 저장할 때 날짜를 넣지 않아서 에러가 났었는데, 엔티티에 @DynamicInsert와  @CreationTimestamp를 추가해서 해결할 수 있었다.
+  @DynamicInsert 는 데이터를 insert 할 때  null인 값을 굳이 넣어주지 않는 역할이고,
+  @CreationTimestamp 는 생성일 컬럼 위에 적어주면, 생성일을 알아서 넣어주는 어노테이션이었다.
+  어노테이션을 얼마나 아는가에 따라서 코드를 많이 줄일 수 있다. 아는 만큼 간결해지는 것 같다.
+
+- user 테이블과 조인하여 작성자 정보를 가져오기 위해서 jpa와 @Query를 사용
+``` Java
+@Query("SELECT c FROM Comments c JOIN FETCH c.user u")
+List<Comments> findAllByPostsIdxOrderByCreatedAtAsc(Integer postIdx);
+```
+-> 단순히 조인 쿼리를 넣었더니 postIdx에 해당하는 댓글들만 불러왔어야했는데 전체를 불러오는 것을 확인
+
+``` Java
+@Query("SELECT c FROM Comments c JOIN FETCH c.user u WHERE c.postsIdx = :postIdx ORDER BY c.createdAt ASC")
+List<Comments> findAllByPostsIdxOrderByCreatedAtAsc(@Param("postIdx") Integer postIdx);
+```
+-> where절을 추가하고, 변수로 받는 부분을 @Param으로 받아서 :postIdx 로 사용해서 쿼리절 안에서 불러주니 원하는대로 게시글 당 댓글을 불러 올 수 있었다.
+
 
 ## 우 비 주
 #### 에러 및 에러 해결
@@ -401,7 +451,20 @@ HTTP/1.1 200 OK Content-Type: application/json Authorization: Bearer your_access
 
 ## 김 현 지
 #### 개발하며 느낀점
-- 여기에 작성하면 됩니다.
+- 프로젝트를 처음 시작할 때, 어떤 것 부터해야할지 몰라 속으로 당황했었다.
+  그동안 강의에서 하는 실습만 따라하다가 처음으로 뭔가 시작하려고 하니까 어려웠다.
+  그래도 팀에서 잘 알려주셔서 너무 헤매지 않고 할 수 있었던 것 같다.
+  깃을 사용하는 게 너무 어렵고 조심스러웠다. 깃을 더 접해봐야겠다.
+
+- jpa로 데이터를 가져오는 방식이 어려웠다.
+  쿼리로는 어떻게 하면되는 지 알겠는데 jpa에서는 네이밍 규칙이 있었고, 조인을 하기 위해서 쓰는 쿼리도 기본의 쿼리와는 살짝 달랐다.
+  조인을 했을 경우 네이밍규칙에 의해 썼던 조건이 안먹히는 경우도 있어서 다시 @Query에서 조건을 다시 쓰기도 하고 거기에 변수를 넣어주기 위한 @Param 이 있다는 것도 알게 되었다.
+
+- 예외처리를 얼마나 해야하고 어떻게 해야하는지를 고민했다.
+  우선은 String으로만 처리를 해뒀는데, 다음에 더 시간이 있다면 메세지와 코드를 넣어서 보내고 싶다.
+  컨트롤러와 서비스에서 나눠서 예외처리를 했는데, 분명 배울 때는 컨트롤러는 짧을 수록 좋다고 했는데 예외처리를 여기에서 하는 게 맞는가? 하는 의문도 들었다.
+  어느정도의 예외처리를 해야하고, 그 예외처리를 하면서 코드 줄 수를 길게 쓰지 않는 방법은 없는지 찾아봐야겠다.
+
 
 ## 우 비 주
 #### 개발하며 느낀점
