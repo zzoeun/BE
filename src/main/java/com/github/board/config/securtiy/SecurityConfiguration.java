@@ -41,7 +41,7 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/resources/static/**","/api/login","/api/signup","/api/logout").permitAll()
-//                        .requestMatchers("/").hasAuthority("ROLE_USER")
+                        .requestMatchers("/post/write","/post/edit","/post/delete").hasAuthority("ROLE_USER")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
